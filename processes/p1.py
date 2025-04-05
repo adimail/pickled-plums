@@ -4,51 +4,59 @@ import yaml
 import csv
 import os
 import argparse
+import logging
+
+logger = logging.getLogger("process_logger")
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter(
+    "[%(asctime)s] [%(levelname)s] %(message)s", datefmt="%H:%M:%S"
+)
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 
 def load_config(process_name):
+    """Load configuration for a given process from config.yaml and return latency and output path."""
     with open("config.yaml") as f:
         config = yaml.safe_load(f)
     latency = config["simulation"]["processes"][process_name]["latency"]
-    output_folder = config["simulation"]["output"]
-    return latency, output_folder
-
-
-def ensure_output_dir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+    output_path = os.path.join(config["simulation"]["output"], "csv")
+    return latency, output_path
 
 
 def write_to_csv(data, directory):
-    timestamp = str(int(time.time()))
-    filename = os.path.join(directory, timestamp + ".csv")
+    """Write sensor data to a CSV file with a timestamp as its name."""
+    ts = data["data"]["TS"]
+    filename = os.path.join(directory, f"{int(time.time())}.csv")
     with open(filename, mode="w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["Name", "Value", "TS"])
         for sensor in data["data"]["sensors"]:
-            writer.writerow([sensor["Name"], sensor["Value"], sensor["TS"]])
+            writer.writerow([sensor["Name"], sensor["Value"], ts])
 
 
 def run(process_name):
-    latency, base_output = load_config(process_name)
-    output_path = os.path.join(base_output, process_name)
-    ensure_output_dir(output_path)
+    """Run the process: load config, create output and log directories, fetch sensor data and log actions."""
+    latency, output_path = load_config(process_name)
+    os.makedirs(output_path, exist_ok=True)
+    os.makedirs("logs", exist_ok=True)
+    fh = logging.FileHandler(os.path.join("logs", f"{process_name}.log"))
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.info("Starting process %s", process_name)
     while True:
         try:
             res = requests.get("http://localhost:8080/sensors", timeout=3)
             if res.status_code == 200:
-                data = res.json()
-                write_to_csv(data, output_path)
+                write_to_csv(res.json(), output_path)
+                logger.info("Sensor data written to CSV in %s", output_path)
             else:
-                print(
-                    "[{}] API returned status code {}".format(
-                        process_name, res.status_code
-                    )
-                )
+                logger.error("API returned status code %s", res.status_code)
         except requests.exceptions.RequestException as e:
-            print("[{}] Request error: {}".format(process_name, str(e)))
+            logger.error("Request error: %s", e)
         except Exception as e:
-            print("[{}] General error: {}".format(process_name, str(e)))
+            logger.error("General error: %s", e)
         time.sleep(latency)
 
 
