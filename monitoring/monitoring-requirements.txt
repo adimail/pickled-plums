@@ -1,0 +1,14 @@
+configparser
+ipdb
+psutil
+psycopg2
+PyJWT
+pytest
+redis
+supervisor
+tornado
+websocket-client
+pymongo
+SQLAlchemy
+requests
+paramiko

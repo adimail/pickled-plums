@@ -3,3 +3,8 @@ venv
 output
 logs
 .env
+
+*.pyc
+logs/
+*.log
+.cache
