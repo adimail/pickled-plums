@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>pickled-plums</title>
+        <style>
+            :root {
+                --bg: #282828;
+                --fg: #ebdbb2;
+                --red: #cc241d;
+                --green: #98971a;
+                --yellow: #d79921;
+                --blue: #458588;
+                --purple: #b16286;
+                --aqua: #689d6a;
+                --orange: #d65d0e;
+                --gray: #a89984;
+            }
+
+            body {
+                font-family: monospace;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+                line-height: 1.6;
+                background-color: var(--bg);
+                color: var(--fg);
+            }
+
+            h1, h2, h3 {
+                color: var(--yellow);
+            }
+
+            pre {
+                background: var(--gray);
+                color: var(--bg);
+                padding: 10px;
+                border-radius: 5px;
+                overflow-x: auto;
+                cursor: pointer;
+            }
+
+            a {
+                color: var(--blue);
+                text-decoration: none;
+            }
+
+            a:hover {
+                color: var(--aqua);
+            }
+
+            hr {
+                border: 1px solid var(--orange);
+                margin: 40px 0;
+            }
+
+            footer {
+                text-align: center;
+                margin-top: 50px;
+            }
+
+            img {
+                width: 100%;
+                margin: 20px 0;
+                border: 2px solid var(--yellow);
+                border-radius: 5px;
+            }
+
+            ul {
+                list-style-type: square;
+                color: var(--orange);
+            }
+
+            li {
+                margin-bottom: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>pickled-plums</h1>
+        <p>
+            <strong>Real-time telemetry, pickled for precision</strong>
+        </p>
+        <h2>The Problem it Solves</h2>
+        <p>
+            The issue was raised while we were setting up a pipeline for Azure IoT Hub. The way IoT Hub metered billing based on data throughput and volume was really aggressive. Therefore, <strong>pickled-plums</strong> is an attempt to cut down on billing while maintaining minimal, custom telemetry using self-hosted instances.
+        </p>
+        <ul>
+            <li>Reduces telemetry costs significantly compared to cloud-based solutions</li>
+            <li>Enables real-time data processing on edge devices</li>
+            <li>Customizable for IoT and edge computing use cases</li>
+            <li>Runs efficiently on bare-minimum hardware</li>
+        </ul>
+        <h2>Challenges I Ran Into</h2>
+        <p>
+            Building the low-level design of the client software was a major hurdle. Since we wanted to fit it into a bare-minimum edge machine, the more we refined it, the more minimal it felt it could be.
+        </p>
+        <p>
+            I overcame this by iteratively optimizing the codebase, stripping it down to essentials while ensuring functionality. Rapid prototyping and testing on edge hardware helped refine the solution.
+        </p>
+        <h2>Tech Stack</h2>
+        <ul>
+            <li>
+                <strong>Python</strong>
+            </li>
+            <li>
+                <strong>Golang</strong>
+            </li>
+            <li>
+                <strong>Grafana</strong>
+            </li>
+            <li>
+                <strong>MongoDB</strong>
+            </li>
+            <li>
+                <strong>Self-hosted instances</strong>
+            </li>
+            <li>
+                <strong>Edge computing frameworks</strong>
+            </li>
+        </ul>
+        <hr />
+        <h2>Setting up on VPS</h2>
+        <h3>Self-Hosted Telemetry Service</h3>
+        <pre><code>pip3 install -r requirements.txt</code></pre>
+        <h3>Run Simulation</h3>
+        <pre><code>make simulation</code></pre>
+        <h3>Test API Endpoint</h3>
+        <pre><code>make curl</code></pre>
+        <h3>Run Individual Processes</h3>
+        <pre><code>make process p=p1
+make process p=p2
+make process p=p3
+make process p=p4</code></pre>
+        <p>Each process will stream data to:</p>
+        <pre><code>output/csv/<timestamp>.csv</code></pre>
+        <h3>Output Example</h3>
+        <p>
+            For <code>p1</code>, the output folder structure will be:
+        </p>
+        <pre><code>output/
+└── csv/
+    ├── 1743834567.csv
+    ├── 1743834568.csv
+    └── ...
+</code></pre>
+        <hr />
+        <footer>
+            <p>
+                Made by
+                <a href="https://adimail.github.io" target="_blank">Aditya Godse</a> and <a href="https://github.com/sudhanshu-chauhan" target="_blank">Sudhanshu singh chauhan</a> at <a href="https://www.hackbyte.in/">HACKBYTE 3.0</a>
+            </p>
+            <p>
+                <a href="https://adimail.github.io/notebook-x/" target="_blank">Project Website</a> |
+                <a href="https://github.com/adimail/pickled-plums" target="_blank">GitHub Repository</a>
+            </p>
+        </footer>
+    </body>
+</html>

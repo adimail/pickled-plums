@@ -1,7 +1,0 @@
-pyyaml
-requests
-dotenv
-azure-iot-device
-pymongo[srv]
-pandas
-azure-storage-blob
