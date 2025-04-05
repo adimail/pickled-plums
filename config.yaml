@@ -1,5 +1,6 @@
 simulation:
   output: output
+  input: output/csv
   processes:
     p1:
       script: p1.py

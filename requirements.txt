@@ -1,2 +1,4 @@
 pyyaml
 requests
+dotenv
+azure-iot-device
