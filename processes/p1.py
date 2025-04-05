@@ -25,7 +25,7 @@ def load_config(process_name):
         config = yaml.safe_load(f)
 
     latency = config["simulation"]["processes"][process_name]["latency"]
-    output_path = os.path.join(config["simulation"]["output"], "csv")
+    output_path = os.path.join(config["output"], "csv")
     return latency, output_path
 
 

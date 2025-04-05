@@ -1,9 +1,12 @@
 output: output
 input: output/csv
 
+blob:
+  BATCH_SIZE: 5
+  container_name: "demothoncontainerplain"
+
+
 simulation:
-  output: output
-  input: output/csv
   processes:
     p1:
       script: p1.py

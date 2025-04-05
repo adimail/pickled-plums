@@ -1,7 +1,6 @@
 import os
 import yaml
 import random
-import datetime
 import time
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -47,7 +46,6 @@ class TelemetryService:
         sensors = self.config.get("sensors")
         thresholds = self.config.get("thresholds")
         telemetry = {
-            "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "sensors": {},
         }
         for sensor, limits in sensors.items():
@@ -70,6 +68,7 @@ class TelemetryService:
         """Read CSV files from config output/csv using pandas and save packet size to telemetry folder"""
         input_dir = os.path.join(self.config.get("output", "."), "csv")
         output_dir = os.path.join(self.config.get("output", "."), "telemetry")
+
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
         for fname in os.listdir(input_dir):
@@ -83,14 +82,12 @@ class TelemetryService:
                 packet_size = os.path.getsize(file_path)
                 timestamp = os.path.splitext(fname)[0]
                 output_file = os.path.join(output_dir, f"{timestamp}.csv")
-                df_out = pd.DataFrame(
-                    {"timestamp": [timestamp], "packet_size": [packet_size]}
-                )
+                df_out = pd.DataFrame({"packet_size": [packet_size]})
                 df_out.to_csv(output_file, index=False)
 
     def run(self):
         """Run telemetry service processing CSV files"""
-        interval = self.config.get("interval", 5)
+        interval = self.config.get("interval", 1)
         while True:
             self.process_csv_files()
             time.sleep(interval)
