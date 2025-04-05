@@ -28,7 +28,7 @@ make process p=p4
 Each process will stream data to:
 
 ```
-output/<process_name>/<timestamp>.csv
+output/csv/<timestamp>.csv
 ```
 
 ---
@@ -39,7 +39,7 @@ For `p1`, the output folder structure will be:
 
 ```
 output/
-└── p1/
+└── csv/
     ├── 1743834567.csv
     ├── 1743834568.csv
     └── ...
