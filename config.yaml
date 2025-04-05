@@ -1,0 +1,15 @@
+simulation:
+  output: output
+  processes:
+    p1:
+      script: p1.py
+      latency: 1
+    p2:
+      script: p2.py
+      latency: 2
+    p3:
+      script: p3.py
+      latency: 1.5
+    p4:
+      script: p4.py
+      latency: 0.5
