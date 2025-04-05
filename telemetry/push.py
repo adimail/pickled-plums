@@ -14,6 +14,7 @@ class TelemetryService:
     def __init__(self):
         self.config = self.load_config()
         self.client = self.init_mongo_client()
+        self.BATCH_SIZE = self.config["blob"]["BATCH_SIZE"]
 
     @staticmethod
     def load_config():
@@ -42,19 +43,13 @@ class TelemetryService:
         return random.randint(min_val, max_val)
 
     def generate_telemetry(self):
-        """Generate telemetry data from sensors"""
-        sensors = self.config.get("sensors")
-        thresholds = self.config.get("thresholds")
-        telemetry = {
-            "sensors": {},
-        }
+        sensors = self.config["telemetry-service"]["sensors"]
+        telemetry = {"sensors": {}}
         for sensor, limits in sensors.items():
-            value = self.generate_sensor_data(
-                limits.get("min", 0), limits.get("max", 100)
-            )
+            value = self.generate_sensor_data(limits["min"], limits["max"])
             telemetry["sensors"][sensor] = {
                 "value": value,
-                "threshold_exceeded": value > thresholds.get(sensor, 50),
+                "threshold_exceeded": value > limits["threshold"],
             }
         return telemetry
 
@@ -65,32 +60,55 @@ class TelemetryService:
         collection.insert_one(telemetry)
 
     def process_csv_files(self):
-        """Read CSV files from config output/csv using pandas and save packet size to telemetry folder"""
         input_dir = os.path.join(self.config.get("output", "."), "csv")
         output_dir = os.path.join(self.config.get("output", "."), "telemetry")
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-        for fname in os.listdir(input_dir):
-            if fname.endswith(".csv"):
+
+        while True:
+            csv_files = [f for f in os.listdir(input_dir) if f.endswith(".csv")]
+            total_files = len(csv_files)
+
+            if total_files < self.BATCH_SIZE:
+                print(
+                    f"Waiting for more files. Current: {total_files}, Required: {self.BATCH_SIZE}"
+                )
+                time.sleep(5)
+                continue
+
+            batch_files = csv_files[: self.BATCH_SIZE]
+
+            for fname in batch_files:
+                print(fname)
                 file_path = os.path.join(input_dir, fname)
+
                 try:
                     pd.read_csv(file_path)
                 except Exception as e:
                     print(f"Error reading {file_path}: {e}")
+                    try:
+                        os.remove(file_path)
+                    except Exception as e:
+                        print(f"Error removing {file_path}: {e}")
                     continue
+
                 packet_size = os.path.getsize(file_path)
                 timestamp = os.path.splitext(fname)[0]
                 output_file = os.path.join(output_dir, f"{timestamp}.csv")
                 df_out = pd.DataFrame({"packet_size": [packet_size]})
                 df_out.to_csv(output_file, index=False)
 
+                try:
+                    os.remove(file_path)
+                except Exception as e:
+                    print(f"Error removing {file_path}: {e}")
+
+            print(f"Batch completed. Checking for more files...")
+
     def run(self):
         """Run telemetry service processing CSV files"""
-        interval = self.config.get("interval", 1)
-        while True:
-            self.process_csv_files()
-            time.sleep(interval)
+        self.process_csv_files()
 
 
 if __name__ == "__main__":
