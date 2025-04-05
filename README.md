@@ -8,9 +8,13 @@ A lightweight, self-hosted telemetry framework designed to bring sensor data pro
 
 ## Overview
 
-For this project, we built a custom Golang server that simulates sensor data. We then defined individual telemetry processes in a dedicated `processes` directory. These processes can be orchestrated via a `config.yaml` file, providing flexibility and control over how telemetry data is handled.
+The issuse was raised while we were setting up a pipeline for IoT hub azure and the the way IoT hub was metering the bill based on data throughput and volume, was really aggressive. Therefore, this project is an attempt to **cut down on billing** while maintaining a minimal, custom telemetry using self hosted instances.
 
 Our experiments revealed that Azure IoT Hub charges approximately \$250–\$300 per month for around 140 KB/s of data throughput, while the same volume of data processed on our on-premise telemetry service costs only about \$20. This significant cost reduction validates the value of moving telemetry processing to the edge.
+
+![Prise comparison](docs/cost.jpeg)
+
+For this project, we built a custom Golang server that simulates sensor data. We then defined individual telemetry processes in a dedicated `processes` directory. These processes can be orchestrated via a `config.yaml` file, providing flexibility and control over how telemetry data is handled.
 
 ---
 
