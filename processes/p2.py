@@ -1,24 +1,42 @@
 import os
 import dotenv
+import yaml
+import ipdb
 
 dotenv.load_dotenv()
 from azure.iot.device import IoTHubDeviceClient
 
-INPUT_DIR = ""
 
-def read_data(input_dir:str, device_client: any) -> str:
+def load_config(process_name):
+    if not os.path.exists("config.yaml"):
+        raise FileNotFoundError("Missing config.yaml")
+
+    with open("config.yaml") as f:
+        config = yaml.safe_load(f)
+
+    input_path = os.path.join(config["simulation"]["input"])
+    print(input_path)
+    return input_path
+
+
+INPUT_DIR = load_config("p2")
+
+
+def read_data(input_dir: str, device_client: any) -> str:
     data = None
     for fname in os.listdir(input_dir):
+        ip = os.path.join(input_dir, fname)
+        print(fname)
         if fname.endswith(".csv"):
-            with open(fname, "r") as fh:
+            with open(ip, "r") as fh:
                 data = fh.read()
-            break
-    try:
-        device_client.send_message(data)
-        os.remove(fname)
-    except Exception as err:
-        pass
-                
+        try:
+            device_client.send_message(data)
+            os.remove(ip)
+        except Exception as err:
+            print("Exception err", err)
+        break
+
 
 def main():
     conn_str = os.getenv("IOTHUB_DEVICE_CONNECTION_STRING")
@@ -30,5 +48,6 @@ def main():
         except Exception as err:
             pass
     device_client.shutdown()
+
 
 main()

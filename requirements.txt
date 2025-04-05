@@ -1,2 +1,5 @@
 pyyaml
 requests
+dotenv
+azure-iot-device
+pymongo[srv]
