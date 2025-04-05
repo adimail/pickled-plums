@@ -25,17 +25,17 @@ INPUT_DIR = load_config("p2")
 def read_data(input_dir: str, device_client: any) -> str:
     data = None
     for fname in os.listdir(input_dir):
+        ip = os.path.join(input_dir, fname)
         print(fname)
         if fname.endswith(".csv"):
-            with open(os.path.join(input_dir, fname), "r") as fh:
+            with open(ip, "r") as fh:
                 data = fh.read()
-            break
-    try:
-        print("[LOG] Inside try")
-        device_client.send_message(data)
-        os.remove(fname)
-    except Exception as err:
-        print("Exception err", err)
+        try:
+            device_client.send_message(data)
+            os.remove(ip)
+        except Exception as err:
+            print("Exception err", err)
+        break
 
 
 def main():
