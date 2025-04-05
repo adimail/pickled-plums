@@ -11,13 +11,13 @@ import (
 )
 
 type SensorData struct {
-	Name  string  `json: "Name"`
-	Value int32   `json: "Value"`
-	TS    float64 `json: "ts"`
+	Name  string `json: "Name"`
+	Value int32  `json: "Value"`
 }
 
 type SensorStroke struct {
 	Sensors []SensorData `json:"sensors"`
+	TS      float64      `json: "ts"`
 }
 
 type SensorList struct {
@@ -40,10 +40,10 @@ func generateSensorValues() SensorStroke {
 		sensorData := SensorData{
 			Name:  sensorName,
 			Value: rand.Int32N(101),
-			TS:    float64(time.Now().Unix()),
 		}
 		sensorStroke.Sensors = append(sensorStroke.Sensors, sensorData)
 	}
+	sensorStroke.TS = float64(time.Now().Unix())
 	return sensorStroke
 }
 
