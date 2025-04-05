@@ -1,13 +1,12 @@
 import os
 import dotenv
 import yaml
-import ipdb
 
 dotenv.load_dotenv()
 from azure.iot.device import IoTHubDeviceClient
 
 
-def load_config(process_name):
+def load_config():
     if not os.path.exists("config.yaml"):
         raise FileNotFoundError("Missing config.yaml")
 
@@ -19,35 +18,41 @@ def load_config(process_name):
     return input_path
 
 
-INPUT_DIR = load_config("p2")
+INPUT_DIR = load_config()
 
 
-def read_data(input_dir: str, device_client: any) -> str:
-    data = None
+def read_data(input_dir, device_client):
+    """Process and send messages from CSV files in the input directory."""
     for fname in os.listdir(input_dir):
         ip = os.path.join(input_dir, fname)
-        print(fname)
-        if fname.endswith(".csv"):
+        if os.path.isfile(ip) and fname.endswith(".csv"):
             with open(ip, "r") as fh:
                 data = fh.read()
-        try:
-            device_client.send_message(data)
-            os.remove(ip)
-        except Exception as err:
-            print("Exception err", err)
-        break
+            try:
+                device_client.send_message(data)
+                os.remove(ip)
+                print(ip)
+            except Exception as err:
+                print("Exception:", err)
 
 
 def main():
     conn_str = os.getenv("IOTHUB_DEVICE_CONNECTION_STRING")
+    if not conn_str:
+        raise ValueError("IOTHUB_DEVICE_CONNECTION_STRING environment variable not set")
     device_client = IoTHubDeviceClient.create_from_connection_string(conn_str)
     device_client.connect()
-    while True:
-        try:
-            read_data(input_dir=INPUT_DIR, device_client=device_client)
-        except Exception as err:
-            pass
-    device_client.shutdown()
+    try:
+        while True:
+            try:
+                read_data(input_dir=INPUT_DIR, device_client=device_client)
+            except Exception:
+                pass
+    except KeyboardInterrupt:
+        pass
+    finally:
+        device_client.shutdown()
 
 
-main()
+if __name__ == "__main__":
+    main()

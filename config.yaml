@@ -1,10 +1,13 @@
+output: output
+input: output/csv
+
 simulation:
   output: output
   input: output/csv
   processes:
     p1:
       script: p1.py
-      latency: 10
+      latency: 1
     p2:
       script: p2.py
       latency: 2
@@ -14,3 +17,32 @@ simulation:
     p4:
       script: p4.py
       latency: 0.5
+
+telemetry-service:
+  interval: 5
+
+  sensors:
+    sen1:
+      min: 0
+      max: 100
+      threshold: 50
+    sen2:
+      min: 0
+      max: 100
+      threshold: 50
+    sen3:
+      min: 0
+      max: 100
+      threshold: 50
+    sen4:
+      min: 0
+      max: 100
+      threshold: 50
+    sen5:
+      min: 0
+      max: 100
+      threshold: 50
+    sen6:
+      min: 0
+      max: 100
+      threshold: 50

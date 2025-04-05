@@ -37,9 +37,9 @@ def write_to_csv(data, directory):
 
     with open(filename, mode="w", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow(["Name", "Value", "TS"])
+        writer.writerow(["Name", "Value"])
         for sensor in data["data"]["sensors"]:
-            writer.writerow([sensor["Name"], sensor["Value"], ts])
+            writer.writerow([sensor["Name"], sensor["Value"]])
 
 
 def run(process_name):
