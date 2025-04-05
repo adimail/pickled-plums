@@ -2,7 +2,7 @@ output: output
 input: output/csv
 
 blob:
-  BATCH_SIZE: 5
+  BATCH_SIZE: 10
   container_name: "demothoncontainerplain"
 
 
